@@ -29,9 +29,10 @@ services:
       - "3000:3000"
 
     # Volume mounts for persistence
-    volumes:
-      - ./admins.json:/app/admins.json
-      - ./logs:/app/logs
+    # Note: admins.json will be created inside container automatically
+    # Uncomment below if you want to persist data outside container:
+    # volumes:
+    #   - bot-data:/app
 
     # Network - IMPORTANT: Use same network as Evolution API
     networks:
