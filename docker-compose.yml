@@ -58,6 +58,7 @@ services:
 networks:
   evolution-network:
     external: true # Use existing Evolution API network
+    name: wagateway_evolution_network # Actual network name from server
     # If Evolution API network doesn't exist, create it:
     # external: false
     # driver: bridge
