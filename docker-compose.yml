@@ -30,18 +30,18 @@ services:
     ports:
       - "3000:3000"
 
-    # Volume mounts for persistence
+    # Volume mounts for persistence - Using Docker volumes to avoid Linux permission issues
     volumes:
-      - ./admins.json:/app/admins.json
-      - ./logs:/app/logs
+      - bot-admins:/app/admins.json
+      - bot-logs:/app/logs
 
     # Network - IMPORTANT: Use same network as Evolution API
     networks:
       - evolution-network
 
-    # Health check
+    # Health check - Fixed syntax for better compatibility
     healthcheck:
-      test: [ "CMD", "node", "-e", "require('http').get('http://localhost:3000/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})" ]
+      test: [ "CMD", "sh", "-c", "node -e \"require('http').get('http://localhost:3000/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})\"" ]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -54,11 +54,17 @@ services:
         max-size: "10m"
         max-file: "3"
 
+# Volumes - Docker managed volumes for persistence
+volumes:
+  bot-admins:
+    driver: local
+  bot-logs:
+    driver: local
+
 # Networks
 networks:
   evolution-network:
     external: true # Use existing Evolution API network
-    name: wagateway_evolution_network # Actual network name from server
-    # If Evolution API network doesn't exist, create it:
-    # external: false
-    # driver: bridge
+    name: ${EVOLUTION_NETWORK_NAME:-evolution_network} # Configurable network name
+    # To create network manually: docker network create evolution_network
+    # Or set EVOLUTION_NETWORK_NAME in .env to match your Evolution API network

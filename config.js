@@ -1,10 +1,28 @@
 require('dotenv').config();
 
+// Runtime validation for required environment variables
+const requiredEnvVars = [
+  'EVOLUTION_API_KEY',
+  'EVOLUTION_INSTANCE_NAME'
+];
+
+const missingEnvVars = requiredEnvVars.filter(varName => !process.env[varName]);
+
+if (missingEnvVars.length > 0) {
+  console.error('\n❌ ERROR: Missing required environment variables:');
+  missingEnvVars.forEach(varName => {
+    console.error(`   - ${varName}`);
+  });
+  console.error('\n💡 Please set these variables in your .env file or environment.');
+  console.error('   See .env.example for reference.\n');
+  process.exit(1);
+}
+
 module.exports = {
   evolution: {
     apiUrl: process.env.EVOLUTION_API_URL || 'http://localhost:8080',
     apiKey: process.env.EVOLUTION_API_KEY,
-    instanceName: process.env.INSTANCE_NAME || 'test_v236'
+    instanceName: process.env.EVOLUTION_INSTANCE_NAME || 'default_instance'
   },
 
   bot: {

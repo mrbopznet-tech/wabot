@@ -30,9 +30,10 @@
 ### 🐳 Docker Ready
 - **Optimized image**: Multi-stage build (~150MB)
 - **Production-ready**: Non-root user, health checks
+- **Ubuntu compatible**: Linux line endings (LF), Docker volumes
 - **Portainer compatible**: Deploy via Stack or Container
 - **Auto-restart**: Resilient to crashes
-- **Volume persistence**: Admins and logs preserved
+- **Volume persistence**: Docker volumes for cross-platform compatibility
 
 ---
 
@@ -83,6 +84,9 @@ docker-compose up -d
 EVOLUTION_API_URL=http://evolution-api:8080
 EVOLUTION_API_KEY=your-api-key
 EVOLUTION_INSTANCE_NAME=your-instance
+
+# Docker Network (optional, default: evolution_network)
+EVOLUTION_NETWORK_NAME=evolution_network
 
 # Super Admin Configuration
 ADMINS=62882000300327,110157572870214  # Phone numbers or @lid
@@ -244,6 +248,33 @@ RATE_LIMIT_MAX_REQUESTS=20  # Increase if needed
 ```javascript
 rateLimiter.reset(userId);
 ```
+
+### Ubuntu Deployment Issues
+
+**If deploying from Windows to Ubuntu**, make sure:
+
+1. **Line endings are LF** (already fixed via `.gitattributes`)
+2. **Network exists**:
+   ```bash
+   docker network create evolution_network
+   # Or set your network name in .env
+   ```
+3. **Required environment variables** are set:
+   ```bash
+   # These are required (bot will exit if missing):
+   EVOLUTION_API_KEY=your-key
+   EVOLUTION_INSTANCE_NAME=your-instance
+   ```
+
+**Check deployment logs**:
+```bash
+docker-compose logs wa-bot
+```
+
+Common errors:
+- `network not found` → Create network or set `EVOLUTION_NETWORK_NAME`
+- `Missing required environment variables` → Add to `.env` file
+- `permission denied` → Already fixed with Docker volumes
 
 ---
 
